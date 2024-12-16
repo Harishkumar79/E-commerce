@@ -4,7 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 mongoose.connect('mongodb+srv://harishsen:hksen7976@cluster1.0lhag.mongodb.net/')
-.then(()=>console.log("mongoBB connected"))
+.then(()=>console.log("mongoDB connected"))
 .catch((error)=>console.log(error));
 
 const app = express();
