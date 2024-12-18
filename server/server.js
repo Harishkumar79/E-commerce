@@ -2,17 +2,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const authRouter  = require("./routes/auth/auth-routes");
 
 mongoose.connect('mongodb+srv://harishsen:hksen7976@cluster1.0lhag.mongodb.net/')
 .then(()=>console.log("mongoDB connected"))
 .catch((error)=>console.log(error));
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 app.use(
     cors({
-        origin : "http://localhost:5173/",
+        origin : "http://localhost:5173",
         methods : [ "GET" , "POST" , "DELETE" , "PUT"],
         allowedHeaders : [
             "Content-Type",
@@ -27,5 +28,6 @@ app.use(
 
 app.use(cookieParser());
 app.use(express.json());
+app.use("/api/auth", authRouter)
 
 app.listen(PORT , ()=> console.log(`server is now running on port ${PORT}`));
