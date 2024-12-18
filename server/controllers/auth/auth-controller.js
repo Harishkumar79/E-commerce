@@ -85,6 +85,7 @@ const logOut = async (req, res) => {
 // middleware
 const authMiddleware = async(req , res , next) =>{
     const token = req.cookies.token;
+    
     if(!token) return res.json({
         success : false,
         message : "Unauthorised user!"
