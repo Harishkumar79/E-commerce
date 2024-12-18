@@ -75,10 +75,31 @@ const loginUser = async (req, res) => {
 
 // logout
 const logOut = async (req, res) => {
-    res.clearChookie('token').json({
+    res.clearCookie('token').json({
         success: true,
         message: "Logged out sucessfully"
     })
 }
 
-module.exports = { registerUser , loginUser , logOut };
+
+// middleware
+const authMiddleware = async(req , res , next) =>{
+    const token = req.cookies.token;
+    if(!token) return res.json({
+        success : false,
+        message : "Unauthorised user!"
+    })
+
+    try{
+        const decodedToken = jwt.verify(token , 'CLIENT_SECRET_KEY');
+        req.User = decodedToken;
+        next();
+    }catch(e){
+        res.status(401).json({
+            success : false,
+            message : "Unauthorised user!"
+        })
+    }
+}
+
+module.exports = { registerUser , loginUser , logOut , authMiddleware };
