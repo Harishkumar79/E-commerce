@@ -19,6 +19,8 @@ import UnAuthorized from './components/not-access';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { checkAuth } from './store/auth-slices';
+import { Skeleton } from "@/components/ui/skeleton"
+
 
 function App() {
 
@@ -26,13 +28,14 @@ function App() {
   // const user = null;
 
   const {user , isAuthenticated , isLoading} = useSelector(state => state.auth);
+  console.log(user);
   const dispatch = useDispatch();
 
   useEffect(()=>{
     dispatch(checkAuth());
   },[dispatch])
 
-  if(isLoading) return <div>Loding...</div>
+  if(isLoading) return <Skeleton className="w-[100px] h-[20px] rounded-full" />
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">

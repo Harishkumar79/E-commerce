@@ -22,6 +22,7 @@ function CheckAuth({ isAuthenticated, user, children }) {
 
     // For authenticated users who are not admin trying to access admin pages
     if (isAuthenticated && user?.role !== 'admin' && location.pathname.includes('/admin')) {
+        console.log(user?.role);
         return <Navigate to='/unauth-page' replace />;
     }
 
