@@ -28,7 +28,6 @@ function App() {
   // const user = null;
 
   const {user , isAuthenticated , isLoading} = useSelector(state => state.auth);
-  console.log(user);
   const dispatch = useDispatch();
 
   useEffect(()=>{

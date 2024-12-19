@@ -51,7 +51,7 @@ const loginUser = async (req, res) => {
         // token generation
         const token = jwt.sign({
             id: checkUser._id, role: checkUser.role, email: checkUser.email,
-        }, 'CLIENT_SECRET_KEY', { expiresIn: '10m' });
+        }, 'CLIENT_SECRET_KEY', { expiresIn: '60m' });
 
         res.cookie('token', token, { httpOnly: true, secure: false }).json({
             success: true,
@@ -93,7 +93,7 @@ const authMiddleware = async(req , res , next) =>{
 
     try{
         const decodedToken = jwt.verify(token , 'CLIENT_SECRET_KEY');
-        console.log(decodedToken);
+        // console.log(decodedToken);
         req.user = decodedToken;
         next();
     }catch(e){
