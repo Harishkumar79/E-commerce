@@ -6,14 +6,15 @@ import { addProductFormControls } from "@/config";
 import { Fragment, useState } from "react";
 
 const initialFormData = {
-    productName: "",
+    image: null,
+    title: "",
     description: "",
-    price: 0,
     category: "",
-    size: "",
-    color: "",
-    stock: 0,
-    image: null, 
+    brand: "",
+    price: "",
+    salePrice: "",
+    totalStock: "",
+    averageReview: 0,
 }
 
 function AdminProducts() {
@@ -22,11 +23,13 @@ function AdminProducts() {
     const [formData , setFormData] = useState(initialFormData);
     const [imageFile , setImageFile] = useState(null);
     const [uploadImageUrl , setUploadImageUrl] = useState(null);
+    const [imageLoading , setImageLoading] = useState(false);
 
     function onSubmit(){
 
     }
 
+    console.log(formData , "formData");
 
     return (
         <Fragment>
@@ -43,7 +46,7 @@ function AdminProducts() {
                 <SheetHeader>
                     <SheetTitle>Add New Product</SheetTitle>
                 </SheetHeader>
-                <ProductImageUpload file={imageFile} setFile={setImageFile} uploadImageUrl={uploadImageUrl} setUploadImageUrl={setUploadImageUrl}/>
+                <ProductImageUpload imageFile={imageFile} setImageFile={setImageFile} uploadImageUrl={uploadImageUrl} setUploadImageUrl={setUploadImageUrl} setImageLoading={setImageLoading}/>
                 <div className="py-6">
                     <CommonForm onSubmit={onSubmit} formData={formData} setFormData={setFormData} formControls={addProductFormControls} buttonText={"Add"}/>
                 </div>
