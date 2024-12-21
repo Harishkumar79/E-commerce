@@ -5,7 +5,10 @@ const cookieParser = require('cookie-parser');
 const authRouter  = require("./routes/auth/auth-routes");
 const adminProductsRouter = require("./routes/admin/products-routes");
 
-mongoose.connect('mongodb+srv://harishsen:hksen7976@cluster1.0lhag.mongodb.net/')
+// const mongoDB_Url = process.env.MONGODB_URI;
+// console.log(mongoDB_Url);
+
+mongoose.connect("mongodb+srv://harishsen:hksen7976@cluster1.0lhag.mongodb.net/")
 .then(()=>console.log("mongoDB connected"))
 .catch((error)=>console.log(error));
 
