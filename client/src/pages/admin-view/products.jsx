@@ -3,7 +3,10 @@ import CommonForm from "@/components/common/form";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { addProductFormControls } from "@/config";
-import { Fragment, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { addNewProduct, fetchAllProduct } from "@/store/admin/products-slice";
+import { Fragment, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const initialFormData = {
     image: null,
@@ -13,8 +16,7 @@ const initialFormData = {
     brand: "",
     price: "",
     salePrice: "",
-    totalStock: "",
-    averageReview: 0,
+    totalStock: ""
 }
 
 function AdminProducts() {
@@ -24,12 +26,41 @@ function AdminProducts() {
     const [imageFile , setImageFile] = useState(null);
     const [uploadImageUrl , setUploadImageUrl] = useState(null);
     const [imageLoading , setImageLoading] = useState(false);
+    const {productList} = useSelector(state=>state.adminProducts);
+    const dispatch = useDispatch();  
+    const {toast} = useToast();
+ 
+    function onSubmit(event){
+        event.preventDefault();
+        // console.log("Submitting product data:", {
+        //     ...formData,
+        //     image: uploadImageUrl,
+        // });
+        dispatch(addNewProduct({
+            ...formData,
+            image : uploadImageUrl
+        }))
+        .then((data)=>{
+            console.log(data);
+            if(data?.payload?.success){
+                dispatch(fetchAllProduct);
+                setImageFile(null);
+                setFormData(initialFormData);
+                setOpenCreateproductsDialog(false);
+                toast({
+                    title: "Product Add Successfully"
 
-    function onSubmit(){
-
+                })
+            }
+        })
     }
 
-    console.log(formData , "formData");
+    useEffect(()=>{
+        dispatch(fetchAllProduct());
+    },[dispatch]);
+
+    console.log(productList,uploadImageUrl , "productList");
+    console.log(formData);
 
     return (
         <Fragment>
@@ -46,7 +77,8 @@ function AdminProducts() {
                 <SheetHeader>
                     <SheetTitle>Add New Product</SheetTitle>
                 </SheetHeader>
-                <ProductImageUpload imageFile={imageFile} setImageFile={setImageFile} uploadImageUrl={uploadImageUrl} setUploadImageUrl={setUploadImageUrl} setImageLoading={setImageLoading}/>
+                <ProductImageUpload imageFile={imageFile} setImageFile={setImageFile} uploadImageUrl={uploadImageUrl} setUploadImageUrl={setUploadImageUrl} setImageLoading={setImageLoading} imageLoading={imageLoading}   
+                />
                 <div className="py-6">
                     <CommonForm onSubmit={onSubmit} formData={formData} setFormData={setFormData} formControls={addProductFormControls} buttonText={"Add"}/>
                 </div>
