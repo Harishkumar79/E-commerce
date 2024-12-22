@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { addProductFormControls } from "@/config";
 import { useToast } from "@/hooks/use-toast";
-import { addNewProduct, fetchAllProduct } from "@/store/admin/products-slice";
+import { addNewProduct, deleteProduct, editProduct, fetchAllProduct } from "@/store/admin/products-slice";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -34,30 +34,33 @@ function AdminProducts() {
     function onSubmit(event) {
         event.preventDefault();
 
-        if (!uploadImageUrl) {
-            toast({
-                title: "Image upload failed",
-                description: "Please try again.",
-                variant: "error",
-            });
-            return;
-        }
-
-        dispatch(
+        currentEditedId !== null ? dispatch(editProduct({
+            id: currentEditedId,
+            formData
+        })).then((data) => {
+            console.log(data , "edit");
+            if (data?.payload?.success) {
+                dispatch(fetchAllProduct());
+                setFormData(initialFormData);
+                setOpenCreateproductsDialog(false);
+                setCurrentEditedId(null);
+                toast({ title: "Product Edit" });
+            }
+        })
+        : dispatch(
             addNewProduct({
                 ...formData,
                 image: uploadImageUrl,
             })
-        )
-            .then((data) => {
-                if (data?.payload?.success) {
-                    dispatch(fetchAllProduct());
-                    setImageFile(null);
-                    setFormData(initialFormData);
-                    setOpenCreateproductsDialog(false);
-                    toast({ title: "Product added successfully" });
-                }
-            })
+        ).then((data) => {
+            if (data?.payload?.success) {
+                dispatch(fetchAllProduct());
+                setImageFile(null);
+                setFormData(initialFormData);
+                setOpenCreateproductsDialog(false);
+                toast({ title: "Product added successfully" });
+            }
+        })
             .catch((error) => {
                 toast({
                     title: "Error",
@@ -65,6 +68,18 @@ function AdminProducts() {
                     variant: "error",
                 });
             });
+    }
+
+    function handleDelete(getCurrentProductId){
+        dispatch(deleteProduct(getCurrentProductId)).then(data =>{
+            if(data?.payload.success){
+                dispatch(fetchAllProduct());
+            }
+        })
+    }
+
+    function isFormValid(){
+        return Object.keys(formData).map(key => formData[key] !== '').every(item => item);
     }
 
     useEffect(() => {
@@ -83,7 +98,10 @@ function AdminProducts() {
                     ? productList.map((productItem) => (
                         <AdminProductTile setCurrentEditedId={setCurrentEditedId}
                             setFormData={setFormData}
-                            setOpenCreateproductsDialog={setOpenCreateproductsDialog} key={productItem.id} product={productItem} />
+                            setOpenCreateproductsDialog={setOpenCreateproductsDialog} 
+                            key={productItem._id} product={productItem} 
+                            handleDelete={handleDelete}
+                            />
                     ))
                     : null}
             </div>
@@ -121,8 +139,9 @@ function AdminProducts() {
                             setFormData={setFormData}
                             formControls={addProductFormControls}
                             buttonText={
-                                currentEditedId !== null ? 'Edit': 'Add'
+                                currentEditedId !== null ? 'Edit' : 'Add'
                             }
+                            isBtnDisable={!isFormValid()}
                         />
                     </div>
                 </SheetContent>
