@@ -26,11 +26,10 @@ const handleImageUpload = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         console.log(req.body);
-        const { title, description, category, brand, price, salePrice, totalStock } = req.body;
-        let image = req.file ? req.file.path : ""; // Handle image file upload if exists
+        const {image, title, description, category, brand, price, salePrice, totalStock } = req.body;
 
         const newlyCreatedProduct = new Product({
-            title, description, category, brand, price, salePrice, totalStock
+            image,title, description, category, brand, price, salePrice, totalStock
         })
         await newlyCreatedProduct.save();
 
