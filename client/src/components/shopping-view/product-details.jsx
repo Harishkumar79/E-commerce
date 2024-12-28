@@ -7,6 +7,7 @@ import { Input } from "../ui/input";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { useToast } from "@/hooks/use-toast";
+import { setProductDetails } from "@/store/shop/product-slice";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
@@ -26,10 +27,15 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         })
     }
 
+    function handelDialogClose(){
+        setOpen(false);
+        dispatch(setProductDetails());
+    }
+
 
     // console.log('productDetails', productDetails);
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handelDialogClose}>
             <DialogContent aria-describedby={undefined} className=" grid grid-cols-2 gap-8 sm:p-12 max-w-[80vw]">
                 <div className="relative overflow-hidden rounded-lg border p-4">
                     <img
