@@ -4,6 +4,8 @@ import ShoppingProductTile from "@/components/shopping-view/product-tile";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu,DropdownMenuContent,DropdownMenuRadioGroup,DropdownMenuRadioItem,DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
+import { useToast } from "@/hooks/use-toast";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { fetchAllFilteredProduct, fetchProductDetails } from "@/store/shop/product-slice";
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -26,13 +28,14 @@ function createSearchParamsHelper(filterParams){
 }
 
 function ShoppingListing() {
-    
-    const dispatch = useDispatch();
     const {productList , productDetails} = useSelector(state=> state.shopProducts );
+    const dispatch = useDispatch();
+    const { user } = useSelector(state => state.auth);
     const [filters , setFilters] = useState({});
     const [sort , setSort] = useState(null);
     const [searchParams , setSearchParams] = useSearchParams();
     const [openDetailsDialog , setOpenDetailsDialog] = useState(false);
+    const {toast} = useToast();
 
 
     function handleSort(value){
@@ -62,18 +65,26 @@ function ShoppingListing() {
     }
 
     function handleGetProductDetails(getCurrentProductId){
-        console.log('getCurrentProductId', getCurrentProductId);
         dispatch(fetchProductDetails(getCurrentProductId));
+    }
+
+    function handleAddToCart(getCurrentProductId){
+        // console.log('getCurrentProductId', getCurrentProductId);
+        dispatch(addToCart({userId : user?.id, productId : getCurrentProductId, quantity : 1})).then(data=>{
+            if(data?.payload.success){
+                dispatch(fetchCartItems(user?.id));
+                toast({
+                    title : "Product is added to cart"
+                })
+            }
+        })
     }
 
     useEffect(()=>{
         setSort("price-lowtohigh");
         setFilters(JSON.parse(sessionStorage.getItem('filters' )) || {});
     },[]);
-
-    console.log(productDetails);
-
-
+    
     useEffect(()=>{
         if(filters && Object.keys(filters).length > 0){
             const createQueryString = createSearchParamsHelper(filters)
@@ -125,7 +136,9 @@ function ShoppingListing() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
                     {
                         productList && productList.length > 0 ? 
-                        productList.map(productItem => <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} key={productItem._id} product={productItem}/>) : null
+                        productList.map(productItem => <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} key={productItem._id} product={productItem}
+                        handleAddToCart={handleAddToCart}
+                        />) : null
                     }
                 </div>
             </div>

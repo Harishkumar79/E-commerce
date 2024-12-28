@@ -4,13 +4,32 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { useToast } from "@/hooks/use-toast";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
-    console.log('productDetails', productDetails);
+    const dispatch = useDispatch();
+    const {user} = useSelector(state=>state.auth);
+    const {toast} = useToast();
+
+    function handleAddToCart(getCurrentProductId){
+        // console.log('getCurrentProductId', getCurrentProductId);
+        dispatch(addToCart({userId : user?.id, productId : getCurrentProductId, quantity : 1})).then(data=>{
+            if(data?.payload.success){
+                dispatch(fetchCartItems(user?.id));
+                toast({
+                    title : "Product is added to cart"
+                })
+            }
+        })
+    }
+
+
+    // console.log('productDetails', productDetails);
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTitle>Product Details</DialogTitle>
             <DialogContent aria-describedby={undefined} className=" grid grid-cols-2 gap-8 sm:p-12 max-w-[80vw]">
                 <div className="relative overflow-hidden rounded-lg border p-4">
                     <img
@@ -43,7 +62,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                         <span className=" text-muted-foreground">(4.5)</span>
                     </div>
                     <div className="mt-5 mb-5">
-                        <Button className="w-full">Add to Cart</Button>
+                        <Button className="w-full" onClick={()=>handleAddToCart(productDetails?._id)}>Add to Cart</Button>
                     </div>
                     <Separator />
                     <div className="max-h-[300px] overflow-auto">
