@@ -11,10 +11,14 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllFilteredProduct } from '@/store/shop/product-slice';
+import { fetchAllFilteredProduct, fetchProductDetails } from '@/store/shop/product-slice';
 import ShoppingProductTile from '@/components/shopping-view/product-tile';
+import { useNavigate } from 'react-router-dom';
+import { addToCart, fetchCartItems } from '@/store/shop/cart-slice';
+import { useToast } from '@/hooks/use-toast';
+import ProductDetailsDialog from '@/components/shopping-view/product-details';
 
-const catrgoryWithIcon = [
+const categoryWithIcon = [
     { id: "men", label: "Men", icon: ShirtIcon },
     { id: "women", label: "Women", icon: CloudLightning },
     { id: "kids", label: "Kids", icon: BabyIcon },
@@ -33,10 +37,41 @@ const brandsWithIcon = [
 
 function ShoppingHome() {
 
+    const [openDetailsDialog , setOpenDetailsDialog] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
     const slides = [bannerOne, bannerTwo, bannerThree];
-    const { productList } = useSelector(state => state.shopProducts)
+    const navigate = useNavigate();
+    const { user } = useSelector(state => state.auth)
+    const { productList , productDetails} = useSelector(state => state.shopProducts);
+    const {toast} = useToast();
     const dispatch = useDispatch();
+
+    function handleNavigateToListingPage(getCurrentItem , section){
+        console.log('getCurrentItem', getCurrentItem , 'section' , section);
+        sessionStorage.removeItem('filters');
+        const currentFilter = {
+            [section] : [getCurrentItem.id]
+        }
+
+        sessionStorage.setItem('filters' , JSON.stringify(currentFilter))
+        navigate(`/shop/listing`);
+    }
+
+    function handleGetProductDetails(getCurrentProductId){
+        dispatch(fetchProductDetails(getCurrentProductId));
+    }
+
+    function handleAddToCart(getCurrentProductId){
+        // console.log('getCurrentProductId', getCurrentProductId);
+        dispatch(addToCart({userId : user?.id, productId : getCurrentProductId, quantity : 1})).then(data=>{
+            if(data?.payload.success){
+                dispatch(fetchCartItems(user?.id));
+                toast({
+                    title : "Product is added to cart"
+                })
+            }
+        })
+    }
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -46,11 +81,15 @@ function ShoppingHome() {
         return () => clearInterval(timer);
     }, []);
 
-    console.log('productList', productList);
-
     useEffect(() => {
         dispatch(fetchAllFilteredProduct({ filterParams: {}, sortParams: 'price-lotohigh' }));
     }, [dispatch]);
+
+    useEffect(()=>{
+        if(productDetails !== null){
+            setOpenDetailsDialog(true);
+        }
+    },[productDetails]);
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -74,10 +113,10 @@ function ShoppingHome() {
                     <h2 className=' text-3xl font-bold text-center mb-8'>Shop by catrgory</h2>
                     <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
                         {
-                            catrgoryWithIcon.map(catrgoryItem => <Card key={catrgoryItem.id} className="cursor-pointer hover:shadow-lg transition-shadow">
+                            categoryWithIcon.map(categoryItem => <Card onClick={()=>handleNavigateToListingPage(categoryItem , 'category')} key={categoryItem.id} className="cursor-pointer hover:shadow-lg transition-shadow">
                                 <CardContent className="flex flex-col items-center justify-center p-6">
-                                    <catrgoryItem.icon className='w-12 h-12 mb-4 text-primary' />
-                                    <span className=' font-bold'>{catrgoryItem.label}</span>
+                                    <categoryItem.icon className='w-12 h-12 mb-4 text-primary' />
+                                    <span className=' font-bold'>{categoryItem.label}</span>
                                 </CardContent>
                             </Card>
                             )
@@ -91,7 +130,8 @@ function ShoppingHome() {
                     <h2 className=' text-3xl font-bold text-center mb-8'>Shop by brands</h2>
                     <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4'>
                         {
-                            brandsWithIcon.map(brandItem => <Card key={brandItem.id} className="cursor-pointer hover:shadow-lg transition-shadow">
+                            brandsWithIcon.map(brandItem => <Card 
+                            onClick={()=>handleNavigateToListingPage(brandItem , 'brand')}key={brandItem.id} className="cursor-pointer hover:shadow-lg transition-shadow">
                                 <CardContent className="flex flex-col items-center justify-center p-6">
                                     <brandItem.icon className='w-12 h-12 mb-4 text-primary' />
                                     <span className=' font-bold'>{brandItem.label}</span>
@@ -109,12 +149,16 @@ function ShoppingHome() {
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
                        {
                         productList && productList.length > 0 ? (
-                            productList.map((productItem)=><ShoppingProductTile key={productItem._id} product={productItem} />)
+                            productList.map((productItem)=><ShoppingProductTile key={productItem._id} product={productItem} 
+                            handleGetProductDetails={handleGetProductDetails}
+                            handleAddToCart={handleAddToCart}
+                            />)
                          ) : null
                        }
                     </div>
                 </div>
             </section>
+            <ProductDetailsDialog open={openDetailsDialog} setOpen={setOpenDetailsDialog} productDetails={productDetails}/>
         </div>
     );
 }

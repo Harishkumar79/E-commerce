@@ -36,6 +36,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     // console.log('productDetails', productDetails);
     return (
         <Dialog open={open} onOpenChange={handelDialogClose}>
+        <DialogTitle>Product details</DialogTitle>
             <DialogContent aria-describedby={undefined} className=" grid grid-cols-2 gap-8 sm:p-12 max-w-[80vw]">
                 <div className="relative overflow-hidden rounded-lg border p-4">
                     <img
