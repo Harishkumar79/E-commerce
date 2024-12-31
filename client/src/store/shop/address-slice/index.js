@@ -6,7 +6,7 @@ const initialState = {
     isLoading: false
 }
 
-// add To Cart
+// add address
 export const addNewAddress = createAsyncThunk(
     "/addresses/addNewAddress",
     async(formData)=>{
@@ -15,7 +15,7 @@ export const addNewAddress = createAsyncThunk(
     }
 );
 
-// Fetch cart items
+// Fetch address
 export const fetchAddress = createAsyncThunk(
     "/addresses/fetchAddress",
     async(userId)=>{
@@ -24,16 +24,16 @@ export const fetchAddress = createAsyncThunk(
     }
 );
 
-// delete cart items
+// delete address
 export const deleteAddress = createAsyncThunk(
     "/addresses/deleteAddress",
     async({userId , addressId })=>{
-        const response = await axios.delete(`http://localhost:5000/api/shop/address/update/${userId}/${addressId}`);
+        const response = await axios.delete(`http://localhost:5000/api/shop/address/delete/${userId}/${addressId}`);
         return response.data;
     }
 );
 
-// update cart items
+// update address
 export const editAddress = createAsyncThunk(
     "/addresses/editAddress",
     async({userId , addressId ,formData})=>{
@@ -48,17 +48,15 @@ const addressSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-        //addToCart
+        //add address
             .addCase(addNewAddress.pending, (state) => {
                 state.isLoading = true;
             }).addCase(addNewAddress.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.addressList = action.payload.data;
             }).addCase(addNewAddress.rejected, (state,action) => {
                 state.isLoading = false;
-                state.addressList = [];
             })
-            //fetchCartItems
+            //fetchAddress
             .addCase(fetchAddress.pending, (state) => {
                 state.isLoading = true;
             })
@@ -70,30 +68,6 @@ const addressSlice = createSlice({
                 state.isLoading = false;
                 state.addressList = [];
             })
-            //deleteCartItems
-            .addCase(deleteAddress.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(deleteAddress.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.addressList = action.payload.data;
-            })
-            .addCase(deleteAddress.rejected, (state) => {
-                state.isLoading = false;
-                state.addressList = [];
-            })
-            //updateCartQuantity
-            .addCase(editAddress.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(editAddress.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.addressList = action.payload.data;
-            })
-            .addCase(editAddress.rejected, (state) => {
-                state.isLoading = false;
-                state.addressList = [];
-            });
     }
 })
 
