@@ -7,6 +7,7 @@ const adminProductsRouter = require("./routes/admin/products-routes");
 const shopProductsRouter = require("./routes/shop/products-routes");
 const shopCartRouter = require("./routes/shop/cart-routes");
 const addressRouter = require("./routes/shop/address-routes");
+const shopOderRouter = require("./routes/shop/order-routes");
 
 
 // const mongoDB_Url = process.env.MONGODB_URI;
@@ -41,6 +42,7 @@ app.use("/api/admin/products" , adminProductsRouter);
 app.use("/api/shop/products" , shopProductsRouter);
 app.use("/api/shop/cart" , shopCartRouter);
 app.use("/api/shop/address" , addressRouter);
+app.use("/api/shop/order" , shopOderRouter);
 
 
 app.listen(PORT , ()=> console.log(`server is now running on port ${PORT}`));
