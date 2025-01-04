@@ -8,8 +8,8 @@ const initialState = {
 }
 
 export const createNewOrder = createAsyncThunk('/order/createNewOrder', async(orderData)=>{
+    // console.log('Received Order Data:',orderData);
     const response = await axios.post('http://localhost:5000/api/shop/order/create' , orderData);
-
     return response.data;
 })
 

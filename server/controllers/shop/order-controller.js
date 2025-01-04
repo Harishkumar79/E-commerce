@@ -3,6 +3,8 @@ const Order = require("../../models/Order")
 
 const createOrder = async (req, res) => {
     try {
+        
+        // console.log('Received Order Data:', req.body);
 
         const { userId,
             cartItems,
@@ -14,7 +16,8 @@ const createOrder = async (req, res) => {
             orderDate,
             orderUpdateDate,
             paymentId,
-            payerId
+            payerId,
+            cartId
         } = req.body
 
         const create_payment_json = {
@@ -47,9 +50,11 @@ const createOrder = async (req, res) => {
 
         }
 
+       
+
         paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
             if (error) {
-                consol.log(error);
+                console.error('Error Details:', error.response.details);
 
                 return res.status(500).json({
                     success: false,
@@ -58,6 +63,7 @@ const createOrder = async (req, res) => {
             } else {
                 const newlyCreatedOrder = new Order({
                     userId,
+                    cartId,
                     cartItems,
                     addressInfo,
                     orderStatus,
