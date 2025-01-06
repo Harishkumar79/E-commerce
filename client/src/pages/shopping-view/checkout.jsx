@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { createNewOrder } from "@/store/shop/order-slice";
 import { useToast } from "@/hooks/use-toast";
-import { title } from "process";
 
 function ShoppingCheckout() {
 
