@@ -1,33 +1,50 @@
-import { DialogContent } from "../ui/dialog";
+import { useSelector } from "react-redux";
+import { Badge } from "../ui/badge";
+import { DialogContent, DialogTitle } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 
 
-function ShoppingOrderDetailsView() {
+function ShoppingOrderDetailsView({ orderDetails }) {
 
-    function handleUpdateStatus(event){
+    const { user } = useSelector(state => state.auth);
+
+    function handleUpdateStatus(event) {
         console.log('event', event);
     }
 
     return (
         <DialogContent className=" sm:max-w-[600px]">
+            <DialogTitle>Order Details</DialogTitle>
             <div className=" grid gap-6">
                 <div className="grid gap-2">
                     <div className="flex mt-6 items-center justify-between">
                         <p className=" font-medium">Order ID</p>
-                        <Label>123456</Label>
+                        <Label>{orderDetails?._id}</Label>
                     </div>
                     <div className="flex mt-2 items-center justify-between">
                         <p className=" font-medium">Order Date</p>
-                        <Label>123456</Label>
+                        <Label>{orderDetails?.orderDate.split('T')[0]}</Label>
                     </div>
                     <div className="flex mt-2 items-center justify-between">
                         <p className=" font-medium">Order Price</p>
-                        <Label>$123456</Label>
+                        <Label>${orderDetails?.totalAmount}</Label>
+                    </div>
+                    <div className="flex mt-2 items-center justify-between">
+                        <p className=" font-medium">Payment Method</p>
+                        <Label>${orderDetails?.paymentMethod}</Label>
+                    </div>
+                    <div className="flex mt-2 items-center justify-between">
+                        <p className=" font-medium">Payment Status</p>
+                        <Label>${orderDetails?.paymentStatus}</Label>
                     </div>
                     <div className="flex mt-2 items-center justify-between">
                         <p className=" font-medium">Order Status</p>
-                        <Label>123456</Label>
+                        <Label>
+                            <Badge className={`py-1 px-3 ${orderDetails?.orderStatus === 'conform' ? 'bg-green-500' : 'bg-black'}`}>
+                                {orderDetails?.orderStatus}
+                            </Badge>
+                        </Label>
                     </div>
                 </div>
                 <Separator />
@@ -35,10 +52,16 @@ function ShoppingOrderDetailsView() {
                     <div className=" grid gap-2">
                         <div className=" font-medium">Orders Details</div>
                         <ul className=" grid gap-3">
-                            <li className="flex items-center justify-between">
-                                <span>Product one</span>
-                                <span>$1000</span>
-                            </li>
+                        {
+                            orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ? 
+                            orderDetails?.cartItems.map(item => <li className="flex items-center justify-between" key={item._id}>
+                                <span>Title : {item.title}</span>
+                                <span>Quantity : {item.quantity}</span>
+                                <span>Price : ${item.price}</span>
+                            </li>) 
+                            : null
+                        }
+                            
                         </ul>
                     </div>
                 </div>
@@ -47,8 +70,12 @@ function ShoppingOrderDetailsView() {
                     <div className=" grid gap-2">
                         <div className=" font-medium">Shipping info</div>
                         <div className=" grid gap-0.5 text-muted-foreground">
-                            <span>John Doe</span>
-                            <span>Address</span>
+                            <span>{user.userName}</span>
+                            <span>{orderDetails?.addressInfo?.address}</span>
+                            <span>{orderDetails?.addressInfo?.city}</span>
+                            <span>{orderDetails?.addressInfo?.pincode}</span>
+                            <span>{orderDetails?.addressInfo?.phone}</span>
+                            <span>{orderDetails?.addressInfo?.notes}</span>
                             <span>City</span>
                             <span>Phone</span>
                             <span>pincode</span>
