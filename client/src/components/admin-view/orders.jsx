@@ -1,14 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Dialog } from "../ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import AdminOrderDetailsView from "./order-details";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllOrdersForAdmin, getOrderDetailsForAdmin, resetOrderDetails } from "@/store/admin/orders-slice";
+import { Badge } from "../ui/badge";
 
 
 function AdminOrdersView() {
 
+    function handleFetchOrderDetails(getId){
+        dispatch(getOrderDetailsForAdmin(getId));
+    }
+
     const [openDetailsDialog , setOpenDetailsDialog] = useState(false);
+    const {orderList , orderDetails} = useSelector(state => state.adminOrder);
+
+    const dispatch = useDispatch();
+
+    useEffect(()=>{
+        dispatch(getAllOrdersForAdmin());
+    },[dispatch])
+
+    useEffect(()=>{
+        if(orderDetails !== null){
+            setOpenDetailsDialog(true);
+        }
+    },[orderDetails])
+
+    console.log('orderList', orderList);
 
     return (
         <Card>
@@ -29,19 +51,36 @@ function AdminOrdersView() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell>12345</TableCell>
-                            <TableCell>27/06/2025</TableCell>
-                            <TableCell>in progress</TableCell>
-                            <TableCell>$1000</TableCell>
-                            <TableCell>12345</TableCell>
+                    {
+                        orderList && orderList.length > 0 ?
+                        orderList.map(orderItem =>
+                            <TableRow key={orderItem?._id}>
+                            <TableCell>{orderItem?._id}</TableCell>
+                            <TableCell>{orderItem?.orderDate.split('T')[0]}</TableCell>
                             <TableCell>
-                                <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog}>
-                                    <Button onClick={()=>setOpenDetailsDialog(true)}>View Details</Button>
-                                    <AdminOrderDetailsView/>
+                            <Badge className={`py-1 px-3 ${orderItem?.orderStatus === 'conform' ? 'bg-green-500' : 'bg-black'}`}>
+                            {orderItem?.orderStatus}
+                            </Badge>
+                            </TableCell>
+                            <TableCell>{orderItem?.totalAmount}</TableCell>
+                            <TableCell>
+                                <Dialog open={openDetailsDialog}
+                                onOpenChange={()=>{
+                                    setOpenDetailsDialog(false);
+                                    dispatch(resetOrderDetails());
+                                }}
+                                >
+                                    <Button 
+                                    onClick={()=> handleFetchOrderDetails(orderItem?._id)}
+                                    >View Details</Button>
+
+                                    <AdminOrderDetailsView orderDetails={orderDetails} 
+                                    />
                                 </Dialog>
                             </TableCell>
                         </TableRow>
+                        ) : null
+                    }
                     </TableBody>
                 </Table>
             </CardContent>
