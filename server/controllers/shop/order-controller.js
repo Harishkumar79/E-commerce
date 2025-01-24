@@ -21,6 +21,11 @@ const createOrder = async (req, res) => {
             cartId
         } = req.body
 
+
+        const calculatedTotal = cartItems.reduce((sum, item) => {
+            return sum + (item.price * item.quantity);
+        }, 0);
+
         const create_payment_json = {
             intent: 'sale',
             payer: {
@@ -43,7 +48,7 @@ const createOrder = async (req, res) => {
                     },
                     amount: {
                         currency: 'USD',
-                        total: totalAmount.toFixed(2)
+                        total: calculatedTotal.toFixed(2);
                     },
                     description: 'description'
                 }

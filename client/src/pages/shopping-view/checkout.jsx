@@ -3,7 +3,7 @@ import bannerImg from "../../assets/account.jpg"
 import { useDispatch, useSelector } from "react-redux";
 import UserCartItemsContent from "@/components/shopping-view/cart-items-content";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createNewOrder } from "@/store/shop/order-slice";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,12 +24,11 @@ function ShoppingCheckout() {
     const totalCartAmount = cartItems && cartItems.items && cartItems.items.length > 0
         ? cartItems.items.reduce((sum, currentItem) => (
             sum + (
-                currentItem?.salePrice > 0
-                    ? currentItem?.salePrice
-                    : currentItem?.price
-            ) * currentItem?.quantity
+                currentItem.salePrice > 0 ? currentItem.salePrice : currentItem.price
+            ) * currentItem.quantity
         ), 0)
         : 0;
+        
 
     function handleInitiatePaypalPayment() {
 
