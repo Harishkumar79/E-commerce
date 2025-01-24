@@ -31,7 +31,7 @@ function MenuItems() {
 
     return <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
         {
-            ShoppingViewHeaderMenuItem.map(menuItem => <Label className="text-sm font-medium cursor-pointer" key={menuItem.id} onClick={()=>handleNavigate(menuItem)}
+            ShoppingViewHeaderMenuItem.map(menuItem => <Label className=" text-lg font-medium cursor-pointer" key={menuItem.id} onClick={()=>handleNavigate(menuItem)}
             >
             {menuItem.label}
             </Label>
@@ -101,7 +101,7 @@ function ShoppingHeader() {
             <div className="flex h-16 items-center justify-between px-4 md:px-6">
                 <Link to={"/shop/home"} className="flex items-center gap-2">
                     <HousePlug className="h-6 w-6" />
-                    <span className=" font-bold">Ecommerce</span>
+                    <span className=" font-bold text-lg">Ecommerce</span>
                 </Link>
                 <Sheet>
                     <SheetTrigger asChild>

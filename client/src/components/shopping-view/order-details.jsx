@@ -41,7 +41,9 @@ function ShoppingOrderDetailsView({ orderDetails }) {
                     <div className="flex mt-2 items-center justify-between">
                         <p className=" font-medium">Order Status</p>
                         <Label>
-                            <Badge className={`py-1 px-3 ${orderDetails?.orderStatus === 'conform' ? 'bg-green-500' : 'bg-black'}`}>
+                            <Badge className={`py-1 px-3 ${orderDetails?.orderStatus === 'conform' ? 'bg-green-500' 
+                            : orderDetails?.orderStatus === 'rejected' ? 'bg-red-600'
+                             : 'bg-black'}`}>
                                 {orderDetails?.orderStatus}
                             </Badge>
                         </Label>
