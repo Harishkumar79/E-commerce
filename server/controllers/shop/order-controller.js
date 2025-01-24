@@ -48,7 +48,7 @@ const createOrder = async (req, res) => {
                     },
                     amount: {
                         currency: 'USD',
-                        total: calculatedTotal.toFixed(2);
+                        total: calculatedTotal.toFixed(2)
                     },
                     description: 'description'
                 }
