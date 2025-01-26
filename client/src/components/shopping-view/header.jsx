@@ -21,7 +21,7 @@ function MenuItems() {
 
     function handleNavigate(getCurrentMenuItem){
         sessionStorage.removeItem('filters')
-        const currentFilter = getCurrentMenuItem.id !== 'home' && getCurrentMenuItem.id !== 'products' ? 
+        const currentFilter = getCurrentMenuItem.id !== 'home' && getCurrentMenuItem.id !== 'products' && getCurrentMenuItem.id !== 'search' ? 
         {
             category : [getCurrentMenuItem.id]
         } : null
@@ -64,7 +64,7 @@ function HeaderRightContent() {
         }
     },[dispatch,user?.id]);
 
-    console.log(cartItems.items, "hello");
+    // console.log(cartItems.items, "hello");
 
     return <div className="flex flex-col lg:items-center lg:flex-row gap-4 ">
         <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet} >
