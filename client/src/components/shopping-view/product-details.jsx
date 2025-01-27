@@ -8,15 +8,45 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { useToast } from "@/hooks/use-toast";
 import { setProductDetails } from "@/store/shop/product-slice";
+import { Label } from "../ui/label";
+import StarRatingComponent from "../common/star-rating";
+import { useEffect, useState } from "react";
+import { addReview, getReviews } from "@/store/shop/review-slice";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
+    const [reviewMsg, setReviewMsg] = useState('');
+    const [rating, setRating] = useState(0);
     const dispatch = useDispatch();
-    const {user} = useSelector(state=>state.auth);
+    const { user } = useSelector(state => state.auth);
     const { cartItems } = useSelector(state => state.shopCart);
-    const {toast} = useToast();
+    const { reviews } = useSelector(state => state.shopReview);
+    const { toast } = useToast();
 
-    function handleAddToCart(getCurrentProductId , getTotalStock ){
+    function handleRatingChange(getRating) {
+        setRating(getRating);
+    }
+
+    function handleAddReview() {
+        dispatch(addReview({
+            productId: productDetails?._id,
+            userId: user?.id,
+            userName: user?.userName,
+            reviewMessage: reviewMsg,
+            reviewValue: rating
+        })).then(data => {
+            if (data.payload.success) {
+                setRating(0)
+                setReviewMsg('')
+                dispatch(getReviews(productDetails?._id))
+                toast({
+                    title: "Review add successfully!"
+                })
+            }
+        })
+    }
+
+    function handleAddToCart(getCurrentProductId, getTotalStock) {
         // console.log('getCurrentProductId', getCurrentProductId);
 
         let getCartItems = cartItems.items || [];
@@ -25,10 +55,10 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             if (indexOfCurrentItem > -1) {
                 const getQuantity = getCartItems[indexOfCurrentItem].quantity;
 
-                if(getQuantity + 1 > getTotalStock){
+                if (getQuantity + 1 > getTotalStock) {
                     toast({
-                        title : `Only ${getQuantity} quantity can be added for this items`,
-                        variant : 'destructive'
+                        title: `Only ${getQuantity} quantity can be added for this items`,
+                        variant: 'destructive'
                     })
 
                     return;
@@ -36,26 +66,41 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             }
         }
 
-        dispatch(addToCart({userId : user?.id, productId : getCurrentProductId, quantity : 1})).then(data=>{
-            if(data?.payload.success){
+        dispatch(addToCart({ userId: user?.id, productId: getCurrentProductId, quantity: 1 })).then(data => {
+            if (data?.payload.success) {
                 dispatch(fetchCartItems(user?.id));
                 toast({
-                    title : "Product is added to cart"
+                    title: "Product is added to cart"
                 })
             }
         })
     }
 
-    function handelDialogClose(){
+    function handelDialogClose() {
         setOpen(false);
         dispatch(setProductDetails());
+        setRating(0);
+        setReviewMsg("");
     }
+
+    useEffect(() => {
+        if (productDetails !== null) {
+            dispatch(getReviews(productDetails?._id))
+        }
+    }, [productDetails])
+
+    console.log(reviews, "reviews");
+
+    const averageReview = reviews && reviews.length > 0 ?
+        reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) / reviews.length
+        : 0;
 
 
     // console.log('productDetails', productDetails);
+
     return (
         <Dialog open={open} onOpenChange={handelDialogClose}>
-        {/* <DialogTitle>Product details</DialogTitle> */}
+            <DialogTitle className=" sr-only">Product details</DialogTitle>
             <DialogContent aria-describedby={undefined} className=" grid grid-cols-2 gap-8 sm:p-12 max-w-[80vw]">
                 <div className="relative overflow-hidden rounded-lg border p-4">
                     <img
@@ -79,101 +124,54 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                         <div className=" flex items-center gap-0.5">
-                            <StarIcon className="w-5 h-5 fill-primary" />
-                            <StarIcon className="w-5 h-5 fill-primary" />
-                            <StarIcon className="w-5 h-5 fill-primary" />
-                            <StarIcon className="w-5 h-5 fill-primary" />
-                            <StarIcon className="w-5 h-5 fill-primary" />
+                            <StarRatingComponent rating={averageReview} />
                         </div>
-                        <span className=" text-muted-foreground">(4.5)</span>
+                        <span className=" text-muted-foreground">({averageReview.toFixed(2)})</span>
                     </div>
                     <div className="mt-5 mb-5">
-                    {
-                        productDetails?.totalStock === 0 ? 
-                        <Button className="w-full opacity-60 cursor-not-allowed" onClick={()=>handleAddToCart(productDetails?._id)}>Out Of Stock</Button> :
-                        <Button className="w-full" onClick={()=>handleAddToCart(productDetails?._id , productDetails?.totalStock)}>Add to Cart</Button>
-                    }
+                        {
+                            productDetails?.totalStock === 0 ?
+                                <Button className="w-full opacity-60 cursor-not-allowed" onClick={() => handleAddToCart(productDetails?._id)}>Out Of Stock</Button> :
+                                <Button className="w-full" onClick={() => handleAddToCart(productDetails?._id, productDetails?.totalStock)}>Add to Cart</Button>
+                        }
                     </div>
                     <Separator />
                     <div className="max-h-[300px] overflow-auto">
                         <h2 className=" text-xl font-bold mb-4">Reviews</h2>
                         <div className="grid grid-6">
-                            <div className=" flex gap-4">
-                                <Avatar className="w-10 h-10 border">
-                                    <AvatarFallback>Hk</AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="font-bold">Harish Kumar</h3>
-                                    </div>
-                                    <div className=" flex items-center gap-0.5">
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                    </div>
-                                    <p className=" text-muted-foreground">This is very nice product at this rate.</p>
-                                </div>
-                            </div>
-                            <div className=" flex gap-4">
-                                <Avatar className="w-10 h-10 border">
-                                    <AvatarFallback>Hk</AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="font-bold">Harish Kumar</h3>
-                                    </div>
-                                    <div className=" flex items-center gap-0.5">
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                    </div>
-                                    <p className=" text-muted-foreground">This is very nice product at this rate.</p>
-                                </div>
-                            </div>
-                            <div className=" flex gap-4">
-                                <Avatar className="w-10 h-10 border">
-                                    <AvatarFallback>Hk</AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="font-bold">Harish Kumar</h3>
-                                    </div>
-                                    <div className=" flex items-center gap-0.5">
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                    </div>
-                                    <p className=" text-muted-foreground">This is very nice product at this rate.</p>
-                                </div>
-                            </div>
-                            <div className=" flex gap-4">
-                                <Avatar className="w-10 h-10 border">
-                                    <AvatarFallback>Hk</AvatarFallback>
-                                </Avatar>
-                                <div className="grid gap-1">
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="font-bold">Harish Kumar</h3>
-                                    </div>
-                                    <div className=" flex items-center gap-0.5">
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                        <StarIcon className="w-5 h-5 fill-primary" />
-                                    </div>
-                                    <p className=" text-muted-foreground">This is very nice product at this rate.</p>
-                                </div>
-                            </div>
+                            {
+                                reviews && reviews.length > 0 ?
+                                    reviews.map(reviewItem => <div className=" flex gap-4">
+                                        <Avatar className="w-10 h-10 border">
+                                            <AvatarFallback>{reviewItem?.userName[0].toUpperCase()}</AvatarFallback>
+                                        </Avatar>
+                                        <div className="grid gap-1">
+                                            <div className="flex items-center gap-2">
+                                                <h3 className="font-bold">{reviewItem?.userName}</h3>
+                                            </div>
+                                            <div className=" flex items-center gap-0.5">
+                                                <StarRatingComponent rating={reviewItem?.reviewValue} />
+                                            </div>
+                                            <p className=" text-muted-foreground">{reviewItem?.reviewMessage}</p>
+                                        </div>
+                                    </div>) : <h1>No Reviews</h1>
+                            }
+
                         </div>
-                        <div className="mt-6 flex gap-2 ">
-                            <Input placeholder="write a review..." />
-                            <Button>Submit</Button>
+                        <div className="mt-10 flex-col flex gap-2 ">
+                            <Label>Write a review</Label>
+                            <div className="flex gap-1">
+                                <StarRatingComponent rating={rating} handleRatingChange={handleRatingChange} />
+                            </div>
+                            <Input
+                                name="reviewMsg"
+                                value={reviewMsg}
+                                onChange={(event) => setReviewMsg(event.target.value)}
+                                placeholder="Write a review..."
+                            />
+                            <Button disabled={reviewMsg.trim() === ""}
+                                onClick={handleAddReview}
+                            >Submit</Button>
                         </div>
                     </div>
                 </div>
