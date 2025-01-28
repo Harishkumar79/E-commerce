@@ -58,7 +58,7 @@ const createOrder = async (req, res) => {
         }
 
 
-        console.error('create_payment_json:',create_payment_json);
+        // console.error('create_payment_json:',create_payment_json);
        
 
         paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
