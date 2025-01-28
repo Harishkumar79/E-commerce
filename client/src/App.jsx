@@ -41,13 +41,13 @@ function App() {
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
-      {/* common components */}
-
-
-      {/* routes */}
       <Routes>
         {/* HOME PAGE */}
-        <Route path="/" element={<h1>HOME PAGE</h1>}></Route>
+        <Route path="/" element={
+          <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+            <AuthLayout/>
+          </CheckAuth>
+        }></Route>
         {/* auth */}
         <Route path="/auth" element={
           <CheckAuth isAuthenticated={isAuthenticated} user={user}>

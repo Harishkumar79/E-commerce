@@ -57,11 +57,13 @@ const createOrder = async (req, res) => {
 
         }
 
+
+        console.error('create_payment_json:',create_payment_json);
        
 
         paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
             if (error) {
-                console.error('Error Details:', error.response.details);
+                console.error('Error Details:', error.response);
 
                 return res.status(500).json({
                     success: false,
