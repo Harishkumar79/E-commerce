@@ -50,20 +50,32 @@ const loginUser = async (req, res) => {
 
         // token generation
         const token = jwt.sign({
-            id: checkUser._id, 
-            role: checkUser.role, 
+            id: checkUser._id,
+            role: checkUser.role,
             email: checkUser.email,
-            userName : checkUser.userName
+            userName: checkUser.userName
         }, 'CLIENT_SECRET_KEY', { expiresIn: '60m' });
 
-        res.cookie('token', token, { httpOnly: true, secure: false }).json({
+        // res.cookie('token', token, { httpOnly: true, secure: true }).json({
+        //     success: true,
+        //     message: "Logged in sucessfully",
+        //     user: {
+        //         email: checkUser.email,
+        //         role: checkUser.role,
+        //         id: checkUser._id,
+        //         userName : checkUser.userName
+        //     }
+        // })
+
+        res.status(200).json({
             success: true,
             message: "Logged in sucessfully",
+            token,
             user: {
                 email: checkUser.email,
                 role: checkUser.role,
                 id: checkUser._id,
-                userName : checkUser.userName
+                userName: checkUser.userName
             }
         })
 
@@ -87,25 +99,48 @@ const logOut = async (req, res) => {
 
 
 // middleware
-const authMiddleware = async(req , res , next) =>{
-    const token = req.cookies.token;
-    
-    if(!token) return res.json({
-        success : ture,
-        message : "Unauthorised user!"
+
+const authMiddleware = async (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1] ;
+
+    if (!token) return res.json({
+        success: false,
+        message: "Unauthorised user!"
     })
 
-    try{
-        const decodedToken = jwt.verify(token , 'CLIENT_SECRET_KEY');
+    try {
+        const decodedToken = jwt.verify(token, 'CLIENT_SECRET_KEY');
         // console.log(decodedToken);
         req.user = decodedToken;
         next();
-    }catch(e){
+    } catch (e) {
         res.status(401).json({
-            success : false,
-            message : "Unauthorised user!"
+            success: false,
+            message: "Unauthorised user!"
         })
     }
 }
 
-module.exports = { registerUser , loginUser , logOut , authMiddleware };
+// const authMiddleware = async (req, res, next) => {
+//     const token = req.cookies.token;
+
+//     if (!token) return res.json({
+//         success: false,
+//         message: "Unauthorised user!"
+//     })
+
+//     try {
+//         const decodedToken = jwt.verify(token, 'CLIENT_SECRET_KEY');
+//         // console.log(decodedToken);
+//         req.user = decodedToken;
+//         next();
+//     } catch (e) {
+//         res.status(401).json({
+//             success: false,
+//             message: "Unauthorised user!"
+//         })
+//     }
+// }
+
+module.exports = { registerUser, loginUser, logOut, authMiddleware };
