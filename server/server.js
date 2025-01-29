@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -17,7 +19,7 @@ const commonFeatureRouter = require("./routes/common/feature-routes")
 // const mongoDB_Url = process.env.MONGODB_URI;
 // console.log(mongoDB_Url);
 
-mongoose.connect("mongodb+srv://harishsen:hksen7976@cluster1.0lhag.mongodb.net/")
+mongoose.connect(process.env.MONGO_URL)
 .then(()=>console.log("mongoDB connected"))
 .catch((error)=>console.log(error));
 
@@ -26,7 +28,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
     cors({
-        origin : "http://localhost:5173",
+        origin : process.env.CLIENT_BASE_URL,
         methods : [ "GET" , "POST" , "DELETE" , "PUT"],
         allowedHeaders : [
             "Content-Type",
