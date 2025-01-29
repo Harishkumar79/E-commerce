@@ -4,7 +4,7 @@ import { Card , CardContent , CardFooter } from "../ui/card";
 
 
 function AdminProductTile({ product , setFormData , setCurrentEditedId , setOpenCreateproductsDialog , handleDelete}) {
-    console.log(product, " product-tile");
+    // console.log(product, " product-tile");
     return (
         <Card className="w-full max-w-sm mx-ayto">
             <div>

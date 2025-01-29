@@ -16,8 +16,6 @@ const shopReviewRouter = require("./routes/shop/review-routes")
 const commonFeatureRouter = require("./routes/common/feature-routes")
 
 
-// const mongoDB_Url = process.env.MONGODB_URI;
-// console.log(mongoDB_Url);
 
 mongoose.connect(process.env.MONGO_URL)
 .then(()=>console.log("mongoDB connected"))

@@ -24,7 +24,7 @@ function CheckAuth({ isAuthenticated, user, children }) {
 
     // For already authorized users
     if (isAuthenticated && (location.pathname.includes('/login') || location.pathname.includes('/register'))) {
-        console.log(user?.role);
+        // console.log(user?.role);
         if (user?.role === "admin") {
             return <Navigate to='/admin/dashboard' replace />;
         } else {

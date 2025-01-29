@@ -38,7 +38,7 @@ function AdminProducts() {
             id: currentEditedId,
             formData
         })).then((data) => {
-            console.log(data , "edit");
+            // console.log(data , "edit");
             if (data?.payload?.success) {
                 dispatch(fetchAllProduct());
                 setFormData(initialFormData);

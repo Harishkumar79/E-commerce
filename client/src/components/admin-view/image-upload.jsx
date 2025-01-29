@@ -33,7 +33,7 @@ function ProductImageUpload({ imageFile, setImageFile, uploadImageUrl, setUpload
         }
     }
 
-    console.log(imageFile);
+    // console.log(imageFile);
 
     async function uploadImageToCloudinary() {
         setImageLoading(true)
@@ -41,7 +41,7 @@ function ProductImageUpload({ imageFile, setImageFile, uploadImageUrl, setUpload
         data.append("my_file", imageFile);
         const responce = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/products/upload-image`, data);
 
-        console.log(responce);
+        // console.log(responce);
         if (responce?.data?.success) {
             setUploadImageUrl(responce.data.result.url);
             setImageLoading(false);

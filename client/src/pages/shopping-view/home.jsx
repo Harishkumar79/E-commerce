@@ -48,7 +48,7 @@ function ShoppingHome() {
     const { featureImageList } = useSelector(state => state.commonFeature)
 
     function handleNavigateToListingPage(getCurrentItem , section){
-        console.log('getCurrentItem', getCurrentItem , 'section' , section);
+        // console.log('getCurrentItem', getCurrentItem , 'section' , section);
         sessionStorage.removeItem('filters');
         const currentFilter = {
             [section] : [getCurrentItem.id]

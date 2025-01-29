@@ -10,7 +10,7 @@ function ShoppingOrderDetailsView({ orderDetails }) {
     const { user } = useSelector(state => state.auth);
 
     function handleUpdateStatus(event) {
-        console.log('event', event);
+        // console.log('event', event);
     }
 
     return (

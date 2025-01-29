@@ -79,10 +79,10 @@ function ShoppingCheckout() {
             payerId: '',
         }
 
-        console.log('orderData', orderData);
+        // console.log('orderData', orderData);
 
         dispatch(createNewOrder(orderData)).then((data)=>{
-            console.log('data-order', data);
+            // console.log('data-order', data);
 
             if(data?.payload?.success){
                  setIsPaymentStart(true);

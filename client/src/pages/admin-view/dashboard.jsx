@@ -16,7 +16,7 @@ function AdminDashboard() {
 
     function handleUploadFeatureImage() {
         dispatch(addFeatureImages(uploadImageUrl)).then(data => {
-            console.log('data', data);
+            // console.log('data', data);
             if (data?.payload?.success) {
                 dispatch(getFeatureImages());
                 setImageFile(null);
@@ -29,7 +29,7 @@ function AdminDashboard() {
         dispatch(getFeatureImages());
     }, [dispatch])
 
-    console.log('featureImageList', featureImageList);
+    // console.log('featureImageList', featureImageList);
 
     return (
         <div>

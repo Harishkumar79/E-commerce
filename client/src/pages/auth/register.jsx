@@ -23,7 +23,7 @@ function AuthRegister() {
         event.preventDefault(); 
         dispatch(registerUser(formData)).then((data)=>{
             
-            console.log(data)
+            // console.log(data)
             if(data?.payload?.success){
                 toast({
                     title:data?.payload?.message,
@@ -39,7 +39,7 @@ function AuthRegister() {
         });
     }
 
-    console.log(formData);
+    // console.log(formData);
 
     return (
         <div className="mx-auto w-full max-w-md space-y-6">

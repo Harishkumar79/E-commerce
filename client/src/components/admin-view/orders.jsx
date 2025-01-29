@@ -30,7 +30,7 @@ function AdminOrdersView() {
         }
     },[orderDetails])
 
-    console.log('orderList', orderList);
+    // console.log('orderList', orderList);
 
     return (
         <Card>

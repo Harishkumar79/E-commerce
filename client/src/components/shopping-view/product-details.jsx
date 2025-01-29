@@ -89,7 +89,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         }
     }, [productDetails])
 
-    console.log(reviews, "reviews");
+    // console.log(reviews, "reviews");
 
     const averageReview = reviews && reviews.length > 0 ?
         reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) / reviews.length

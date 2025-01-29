@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { brandOptionsMap, categoryOptionsMap } from "@/config";
 
 function handleGetProductDetails(getCurrentProductId) {
-    console.log('getCurrentProductId', getCurrentProductId);
+    // console.log('getCurrentProductId', getCurrentProductId);
 }
 
 function ShoppingProductTile({ product, handleGetProductDetails, handleAddToCart }) {

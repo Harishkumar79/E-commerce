@@ -1,4 +1,3 @@
-import './app.css';
 import { Route, Routes } from "react-router-dom"
 import NoteFound from './components/not-found';
 import AuthLayout from "./components/auth/layout"
@@ -27,8 +26,6 @@ import SearchProducts from './pages/shopping-view/search';
 
 function App() {
 
-  // const isAuthenticated = false;
-  // const user = null;
 
   const {user , isAuthenticated , isLoading} = useSelector(state => state.auth);
   const dispatch = useDispatch();
