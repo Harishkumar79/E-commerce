@@ -24,16 +24,27 @@ mongoose.connect(process.env.MONGO_URL)
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const allowedOrigins = [
+    process.env.CLIENT_BASE_URL, // Local development
+    CLIENT_BASE_URL_PRODUCTION  // Production environment
+  ];
+
 app.use(
     cors({
-        origin : process.env.CLIENT_BASE_URL,
+        origin : function (origin, callback) {
+            if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+              callback(null, true);
+            } else {
+              callback(new Error('Not allowed by CORS'));
+            }
+          },
         methods : [ "GET" , "POST" , "DELETE" , "PUT"],
         allowedHeaders : [
             "Content-Type",
             "Authorization",
             "Cache-Control",
             "Expires",
-            "pragma"
+            "Pragma"
         ],
         credentials : true
     })
