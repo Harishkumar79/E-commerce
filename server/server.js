@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
     process.env.CLIENT_BASE_URL, // Local development
-    CLIENT_BASE_URL_PRODUCTION  // Production environment
+    process.env.CLIENT_BASE_URL_PRODUCTION  // Production environment
   ];
 
 app.use(
