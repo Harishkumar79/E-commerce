@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { Button } from "../ui/button";
 import { AlignJustify , LogOut } from "lucide-react";
-import { logoutUser } from "@/store/auth-slices";
+import { logoutUser, resetTokenAndCredentials } from "@/store/auth-slices";
 import { useNavigate } from "react-router-dom";
 
 function AdminHeader({setOpen}) {
